@@ -1,6 +1,6 @@
 # NoReel - Disable the instagram reel feed
-This app provides most of instagram features but without the reel feed.
-Reels are not blocked for your personal feed (those you follow) and 
+This app provides most of instagram features but without the reel feed for a better and healthier 
+user experience. Reels are not blocked for your personal feed (those you follow) and 
 direct messages (sent by other individuals). 
 
 ### Limitations
@@ -12,7 +12,7 @@ Limitations are:
 - Not available for IOS / Apple
 - Long content loading time
 - No instagram camera (only file upload)
-- Less prettier UI
+- Less prettier UI than original instagram app
 - General story creation limitations
   - No filters
   - No stickers
@@ -21,7 +21,7 @@ Limitations are:
 
 
 ### Installation and releases
-The app is only provided as APK file. It can be found [here](https://github.com/Kalbra/noreel/releases).
+The app is only provided as APK file. It can be found [here](https://github.com/Kalbra/noreel/releases)
 at the release tab. 
 
 The APK file must be installed manually. A tutorial how to install an AKP file is linked 
