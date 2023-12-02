@@ -7,7 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
@@ -16,23 +19,42 @@ import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 
 
 class MainActivity : ComponentActivity() {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
-    object AndroidJSInterface {
+
+    class AndroidJSInterface(private val preference_button: Button) {
         @JavascriptInterface
-        fun log(msg: String){
+        fun log(msg: String) {
             Log.d("WebInternal", msg)
+        }
+
+        @JavascriptInterface
+        fun setSettingsMenuButton() {
+            val mainHandler = Handler(Looper.getMainLooper())
+            mainHandler.post(Runnable { preference_button.visibility = View.VISIBLE })
+            Log.d("Visible", "Here")
+        }
+
+        @JavascriptInterface
+        fun deleteSettingsMenuButton() {
+            val mainHandler = Handler(Looper.getMainLooper())
+            mainHandler.post(Runnable { preference_button.visibility = View.GONE })
+            Log.d("Visible", "gone")
         }
     }
 
+
     private lateinit var webView: WebView
+
 
     val getFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_CANCELED) {
@@ -46,16 +68,32 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    fun updateBrowser(webView: WebView, preferences: MutableMap<String, *>){
+        if(preferences.getValue("use_followed_feed") as Boolean){
+            webView.loadUrl("https://www.instagram.com/?variant=following")
+        } else {
+            webView.loadUrl("https://www.instagram.com/")
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout)
+        setContentView(R.layout.instagram_webview)
 
         val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this).all
 
         // readExternalStorage
         if(!(ContextCompat.checkSelfPermission(this, readExternalStorage) == PackageManager.PERMISSION_GRANTED)){
             ActivityCompat.requestPermissions(this, arrayOf(readExternalStorage), 23)
+        }
+
+        // Opening assets files
+        var injector_content = ""
+        assets.open("Checker.js").bufferedReader().use {
+            injector_content = it.readText()
         }
 
         webView = findViewById(R.id.webview)
@@ -65,8 +103,14 @@ class MainActivity : ComponentActivity() {
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.settings.allowContentAccess = true
 
+        val preferences_button = findViewById<Button>(R.id.preferencesButton)
 
-        webView.addJavascriptInterface(AndroidJSInterface, "Android")
+        preferences_button.setOnClickListener {
+            val settings_intent = Intent(this, SettingsActivity::class.java)
+            startActivity(settings_intent)
+        }
+
+        webView.addJavascriptInterface(AndroidJSInterface(preferences_button), "Android")
 
         WebView.setWebContentsDebuggingEnabled(true)
 
@@ -88,12 +132,6 @@ class MainActivity : ComponentActivity() {
             ): Boolean {
                 Log.d("WebInternal", "New File dialog")
                 this@MainActivity.filePathCallback = filePathCallback
-                //registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-                    //Log.d("WebInternal", uri.toString());
-                    //filePathCallback?.
-                // onReceiveValue(Array<Uri>(1){uri!!})
-                //}.launch("image/*")
-                //startForResult.launch(intent)
 
                 val intent = Intent(Intent.ACTION_GET_CONTENT)
                 intent.type = "*/*"
@@ -104,53 +142,21 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
-
-
         webView.webViewClient = object : WebViewClient() {
             override fun onLoadResource(view: WebView?, url: String?) {
-                injectJS(view)
+                injectChecker(webView)
                 super.onLoadResource(view, url)
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                injectJS(view);
+                injectChecker(view);
                 super.onPageFinished(view, url)
             }
 
-            fun injectJS(webview: WebView?){
-                webview?.loadUrl("""javascript:(function f(){
-                    function waitForElm(selector) {
-                        return new Promise(resolve => {
-                            if (document.querySelector(selector)) {
-                                return resolve(document.querySelector(selector));
-                            }
-                    
-                            const observer = new MutationObserver(mutations => {
-                                if (document.querySelector(selector)) {
-                                    resolve(document.querySelector(selector));
-                                    observer.disconnect();
-                                }
-                            });
-                    
-                            observer.observe(document.body, {
-                                childList: true,
-                                subtree: true
-                            });
-                        });
-                    }
-                    waitForElm('a[href="/reels/"]').then((elm) => {
-                        Android.log('Element is ready');
-                        Android.log(elm.innerHTML);
-                        elm.remove();
-                    });
-                })()""")
+            fun injectChecker(webview: WebView?){
+                webview?.loadUrl("javascript:(function f(){${injector_content}})()")
             }
         }
-        webView.loadUrl("https://www.instagram.com/")
-        //webView.loadUrl("https://www.rapidtables.com/tools/mirror.html")
-        //webView.loadUrl("https://tus.io/demo")
-        //webView.loadUrl("https://ps.uci.edu/~franklin/doc/file_upload.html")
 
         onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
@@ -159,5 +165,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
+
+        updateBrowser(webView, preferences)
     }
+
+
 }
+
