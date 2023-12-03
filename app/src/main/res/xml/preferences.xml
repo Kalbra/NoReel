@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="View Settings">
 
@@ -19,7 +20,7 @@
                 android:summary="This feature disables the Reel feed but not Reels itself."
                 android:defaultValue="false" />
         <SwitchPreference
-                android:title="Search feed"
+                android:title="Explore feed"
                 android:key="search_feed"
                 android:summary="The feed under the search bar when clicking at the search icon."
                 android:defaultValue="true" />
@@ -31,10 +32,6 @@
                 android:title="Followed feed as default"
                 android:key="use_followed_feed"
                 android:summary="Only content that you follow will be shown in the home feed by default." />
-        <SwitchPreference
-                android:defaultValue="false"
-                android:title="Disable Reels"
-                android:key="disable_all_reels"
-                android:summary="All Reels will be disabled." />
     </PreferenceCategory>
+
 </PreferenceScreen>

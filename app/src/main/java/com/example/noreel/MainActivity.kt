@@ -212,17 +212,12 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         mainHandler.post(object : Runnable {
             override fun run() {
                 injectJS(webView)
-                mainHandler.postDelayed(this, 500)
+                mainHandler.postDelayed(this, 200)
             }
         })
 
-
+        //Injection if the page is fully loaded
         webView.webViewClient = object : WebViewClient() {
-            override fun onLoadResource(view: WebView?, url: String?) {
-                //injectJS(webView)
-                super.onLoadResource(view, url)
-            }
-
             override fun onPageFinished(view: WebView?, url: String?) {
                 injectJS(view);
                 super.onPageFinished(view, url)
