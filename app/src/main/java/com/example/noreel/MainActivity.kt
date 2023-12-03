@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -28,7 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener  {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
     class AndroidJSInterface(private val preference_button: Button) {
@@ -55,6 +56,8 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
 
+    var injector_content = ""
+
 
     val getFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_CANCELED) {
@@ -68,11 +71,56 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun updateBrowser(webView: WebView, preferences: MutableMap<String, *>){
-        if(preferences.getValue("use_followed_feed") as Boolean){
+    private fun updateBrowser(webView: WebView, preferences: SharedPreferences){
+        if(preferences.all.getValue("use_followed_feed") as Boolean){
             webView.loadUrl("https://www.instagram.com/?variant=following")
         } else {
             webView.loadUrl("https://www.instagram.com/")
+        }
+    }
+
+    override fun onSharedPreferenceChanged(preferences: SharedPreferences?, p1: String?) {
+        Log.d("Settings", "Changed: ${preferences?.all?.entries?.toTypedArray().contentToString()}")
+        injector_content = createInjectionString(preferences)
+    }
+
+    private fun createInjectionString(preferences: SharedPreferences?): String {
+        val reader = application.assets.open("Checker.js").bufferedReader()
+        reader.useLines {
+            reader.use {
+                var add_future_lines = false
+                var injector_string = ""
+                for (raw_line in it.lines().toArray()) {
+                    val line: String = raw_line.toString()
+
+                    if (line.startsWith("/**")) {
+                        //Using the space to split the element and to find out its identifier e.g REEL_FEED
+                        val identifier = line.split(" ").toTypedArray()[1]
+
+                        // No lines till the next identifier
+                        if(identifier == "END") {
+                            add_future_lines = false
+                        }
+
+                        // No checking for preference rules at ALWAYS_EXECUTE
+                        else if (identifier == "ALWAYS_EXECUTE") {
+                            add_future_lines = true
+                        }
+
+                        // Preference lookup
+                        else if (!(preferences?.all?.getValue(identifier) as Boolean)){
+                            add_future_lines = true
+                        }
+                    } else {
+                        // Checking if this content line (no identifier) should be added
+                        if(add_future_lines){
+                            injector_string += line
+                        }
+                    }
+                }
+                Log.d("InjectionCompiler", injector_string)
+                return injector_string
+            }
         }
     }
 
@@ -83,25 +131,15 @@ class MainActivity : ComponentActivity() {
 
         val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE
 
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this).all
-
         // readExternalStorage
         if(!(ContextCompat.checkSelfPermission(this, readExternalStorage) == PackageManager.PERMISSION_GRANTED)){
             ActivityCompat.requestPermissions(this, arrayOf(readExternalStorage), 23)
         }
 
-        // Opening assets files
-        var injector_content = ""
-        assets.open("Checker.js").bufferedReader().use {
-            injector_content = it.readText()
-        }
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        preferences.registerOnSharedPreferenceChangeListener(this)
 
-        webView = findViewById(R.id.webview)
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        webView.settings.cacheMode = WebSettings.LOAD_DEFAULT
-        webView.settings.mediaPlaybackRequiresUserGesture = false
-        webView.settings.allowContentAccess = true
+        injector_content = createInjectionString(preferences)
 
         val preferences_button = findViewById<Button>(R.id.preferencesButton)
 
@@ -109,6 +147,20 @@ class MainActivity : ComponentActivity() {
             val settings_intent = Intent(this, SettingsActivity::class.java)
             startActivity(settings_intent)
         }
+
+
+        /*
+        PreferenceManager.getDefaultSharedPreferences(this). { sharedPreferences, s ->
+            injector_content = createInjectionString()
+            return Unit
+        }*/
+
+        webView = findViewById(R.id.webview)
+        webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
+        webView.settings.cacheMode = WebSettings.LOAD_DEFAULT
+        webView.settings.mediaPlaybackRequiresUserGesture = false
+        webView.settings.allowContentAccess = true
 
         webView.addJavascriptInterface(AndroidJSInterface(preferences_button), "Android")
 
@@ -144,16 +196,16 @@ class MainActivity : ComponentActivity() {
 
         webView.webViewClient = object : WebViewClient() {
             override fun onLoadResource(view: WebView?, url: String?) {
-                injectChecker(webView)
+                injectJS(webView)
                 super.onLoadResource(view, url)
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                injectChecker(view);
+                injectJS(view);
                 super.onPageFinished(view, url)
             }
 
-            fun injectChecker(webview: WebView?){
+            fun injectJS(webview: WebView?){
                 webview?.loadUrl("javascript:(function f(){${injector_content}})()")
             }
         }
@@ -168,7 +220,5 @@ class MainActivity : ComponentActivity() {
 
         updateBrowser(webView, preferences)
     }
-
-
 }
 
