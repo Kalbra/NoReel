@@ -17,12 +17,12 @@
         <SwitchPreference
                 android:title="Reel feed"
                 android:key="reel_feed"
-                android:summary="This feature disables the Reel feed but not Reels itself."
+                android:summary="The feed where short videos / reels are played"
                 android:defaultValue="false" />
         <SwitchPreference
                 android:title="Explore feed"
                 android:key="search_feed"
-                android:summary="The feed under the search bar when clicking at the search icon."
+                android:summary="The explore feed under the search bar when clicking at the search icon."
                 android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Content Settings">

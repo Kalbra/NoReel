@@ -29,7 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 
 
-class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener  {
+class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
     class AndroidJSInterface(private val preference_button: Button) {
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
     val getFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_CANCELED) {
             filePathCallback?.onReceiveValue(null)
-        } else if (it.resultCode == Activity.RESULT_OK && filePathCallback != null){
+        } else if (it.resultCode == Activity.RESULT_OK && filePathCallback != null) {
             filePathCallback!!.onReceiveValue(
                 WebChromeClient.FileChooserParams.parseResult(it.resultCode, it.data)
             )
@@ -71,8 +71,8 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun updateBrowser(webView: WebView, preferences: SharedPreferences){
-        if(preferences.all.getValue("use_followed_feed") as Boolean){
+    private fun updateBrowser(webView: WebView, preferences: SharedPreferences) {
+        if (preferences.all.getValue("use_followed_feed") as Boolean) {
             webView.loadUrl("https://www.instagram.com/?variant=following")
         } else {
             webView.loadUrl("https://www.instagram.com/")
@@ -96,10 +96,9 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                     if (line.startsWith("/**")) {
                         //Using the space to split the element and to find out its identifier e.g REEL_FEED
                         val identifier = line.split(" ").toTypedArray()[1]
-                        Log.d("InjectionCompiler", identifier)
 
                         // No lines till the next identifier
-                        if(identifier == "END") {
+                        if (identifier == "END") {
                             add_future_lines = false
                         }
 
@@ -112,14 +111,14 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                         else {
                             val state = preferences?.all?.getValue(identifier) as Boolean
                             // On true execute
-                            if(identifier == "use_followed_feed"){
-                                if(state){
+                            if (identifier == "use_followed_feed") {
+                                if (state) {
                                     add_future_lines = true
                                 }
                             }
                             // On false execute
                             else {
-                                if(!state){
+                                if (!state) {
                                     add_future_lines = true
                                 }
                             }
@@ -128,8 +127,8 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                     // Normal content to be added
                     else {
                         // Checking if this content line (no identifier) should be added
-                        if(add_future_lines && line != ""){
-                            injector_string += line
+                        if (add_future_lines && line != "") {
+                            injector_string += line.trim()
                         }
                     }
                 }
@@ -147,7 +146,11 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE
 
         // readExternalStorage
-        if(!(ContextCompat.checkSelfPermission(this, readExternalStorage) == PackageManager.PERMISSION_GRANTED)){
+        if (!(ContextCompat.checkSelfPermission(
+                this,
+                readExternalStorage
+            ) == PackageManager.PERMISSION_GRANTED)
+        ) {
             ActivityCompat.requestPermissions(this, arrayOf(readExternalStorage), 23)
         }
 
@@ -176,7 +179,10 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
 
         webView.webChromeClient = object : WebChromeClient() {
             override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                Log.d("WebInternal", "${consoleMessage.message()} -- Line: ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}")
+                Log.d(
+                    "WebInternal",
+                    "${consoleMessage.message()} -- Line: ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}"
+                )
                 return true
             }
 
@@ -202,8 +208,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
 
-        fun injectJS(webview: WebView?){
-            Log.d("WebInternal", "INJECTION")
+        fun injectJS(webview: WebView?) {
             webview?.loadUrl("javascript:(function f(){${injector_content}})()")
         }
 
@@ -219,17 +224,15 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         //Injection if the page is fully loaded
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
-                injectJS(view);
+                injectJS(view)
                 super.onPageFinished(view, url)
             }
         }
 
-
-
-        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true){
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if(webView.canGoBack()){
-                    webView.goBack();
+                if (webView.canGoBack()) {
+                    webView.goBack()
                 }
             }
         })
