@@ -96,6 +96,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                     if (line.startsWith("/**")) {
                         //Using the space to split the element and to find out its identifier e.g REEL_FEED
                         val identifier = line.split(" ").toTypedArray()[1]
+                        Log.d("InjectionCompiler", identifier)
 
                         // No lines till the next identifier
                         if(identifier == "END") {
@@ -107,13 +108,27 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                             add_future_lines = true
                         }
 
-                        // Preference lookup
-                        else if (!(preferences?.all?.getValue(identifier) as Boolean)){
-                            add_future_lines = true
+                        // Settings Identifier was found
+                        else {
+                            val state = preferences?.all?.getValue(identifier) as Boolean
+                            // On true execute
+                            if(identifier == "use_followed_feed"){
+                                if(state){
+                                    add_future_lines = true
+                                }
+                            }
+                            // On false execute
+                            else {
+                                if(!state){
+                                    add_future_lines = true
+                                }
+                            }
                         }
-                    } else {
+                    }
+                    // Normal content to be added
+                    else {
                         // Checking if this content line (no identifier) should be added
-                        if(add_future_lines){
+                        if(add_future_lines && line != ""){
                             injector_string += line
                         }
                     }
@@ -147,13 +162,6 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             val settings_intent = Intent(this, SettingsActivity::class.java)
             startActivity(settings_intent)
         }
-
-
-        /*
-        PreferenceManager.getDefaultSharedPreferences(this). { sharedPreferences, s ->
-            injector_content = createInjectionString()
-            return Unit
-        }*/
 
         webView = findViewById(R.id.webview)
         webView.settings.javaScriptEnabled = true
@@ -194,9 +202,24 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
 
+        fun injectJS(webview: WebView?){
+            Log.d("WebInternal", "INJECTION")
+            webview?.loadUrl("javascript:(function f(){${injector_content}})()")
+        }
+
+        val mainHandler = Handler(Looper.getMainLooper())
+
+        mainHandler.post(object : Runnable {
+            override fun run() {
+                injectJS(webView)
+                mainHandler.postDelayed(this, 500)
+            }
+        })
+
+
         webView.webViewClient = object : WebViewClient() {
             override fun onLoadResource(view: WebView?, url: String?) {
-                injectJS(webView)
+                //injectJS(webView)
                 super.onLoadResource(view, url)
             }
 
@@ -204,11 +227,9 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                 injectJS(view);
                 super.onPageFinished(view, url)
             }
-
-            fun injectJS(webview: WebView?){
-                webview?.loadUrl("javascript:(function f(){${injector_content}})()")
-            }
         }
+
+
 
         onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
