@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun createInjectionString(preferences: SharedPreferences?): String {
-        val reader = application.assets.open("Checker.js").bufferedReader()
+        val reader = application.assets.open("Injector.js").bufferedReader()
         reader.useLines {
             reader.use {
                 var add_future_lines = false
