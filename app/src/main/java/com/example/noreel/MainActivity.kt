@@ -42,14 +42,12 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         fun setSettingsMenuButton() {
             val mainHandler = Handler(Looper.getMainLooper())
             mainHandler.post(Runnable { preference_button.visibility = View.VISIBLE })
-            Log.d("Visible", "Here")
         }
 
         @JavascriptInterface
         fun deleteSettingsMenuButton() {
             val mainHandler = Handler(Looper.getMainLooper())
             mainHandler.post(Runnable { preference_button.visibility = View.GONE })
-            Log.d("Visible", "gone")
         }
     }
 
@@ -72,9 +70,13 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun updateBrowser(webView: WebView, preferences: SharedPreferences) {
-        if (preferences.all.getValue("use_followed_feed") as Boolean) {
-            webView.loadUrl("https://www.instagram.com/?variant=following")
-        } else {
+        try {
+            if (preferences.all.getValue("use_followed_feed") as Boolean) {
+                webView.loadUrl("https://www.instagram.com/?variant=following")
+            } else {
+                webView.loadUrl("https://www.instagram.com/")
+            }
+        } catch (e :NoSuchElementException){
             webView.loadUrl("https://www.instagram.com/")
         }
     }
@@ -109,19 +111,24 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
 
                         // Settings Identifier was found
                         else {
-                            val state = preferences?.all?.getValue(identifier) as Boolean
-                            // On true execute
-                            if (identifier == "use_followed_feed") {
-                                if (state) {
-                                    add_future_lines = true
+                            try {
+                                val state = preferences?.all?.getValue(identifier) as Boolean
+                                // On true execute
+                                if (identifier == "use_followed_feed") {
+                                    if (state) {
+                                        add_future_lines = true
+                                    }
                                 }
-                            }
-                            // On false execute
-                            else {
-                                if (!state) {
-                                    add_future_lines = true
+                                // On false execute
+                                else {
+                                    if (!state) {
+                                        add_future_lines = true
+                                    }
                                 }
+                            } catch (e: NoSuchElementException){
+                                Log.w("InjectionCompiler", "Preference '${identifier}' not found")
                             }
+
                         }
                     }
                     // Normal content to be added
@@ -175,7 +182,8 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
 
         webView.addJavascriptInterface(AndroidJSInterface(preferences_button), "Android")
 
-        WebView.setWebContentsDebuggingEnabled(true)
+
+        //WebView.setWebContentsDebuggingEnabled(true)
 
         webView.webChromeClient = object : WebChromeClient() {
             override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
