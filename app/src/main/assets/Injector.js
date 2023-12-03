@@ -47,6 +47,17 @@ if (home_icon){
 
     home_icon.addEventListener("click", event_listner, true);
 }
+const back_to_home = document.querySelector('div[class="x78zum5"]');
+if (back_to_home) {
+    var event_listner = function(event) {
+        window.location.href = "/?variant=following";
+        event.stopImmediatePropagation();
+    };
+
+    back_to_home.removeEventListener("click", event_listner);
+
+    back_to_home.addEventListener("click", event_listner, true);
+}
 /** END **/
 
 /** ALWAYS_EXECUTE **/

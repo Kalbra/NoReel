@@ -183,7 +183,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         webView.addJavascriptInterface(AndroidJSInterface(preferences_button), "Android")
 
 
-        //WebView.setWebContentsDebuggingEnabled(true)
+        WebView.setWebContentsDebuggingEnabled(true)
 
         webView.webChromeClient = object : WebChromeClient() {
             override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
