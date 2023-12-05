@@ -29,9 +29,16 @@
 
         <SwitchPreference
                 android:defaultValue="false"
-                android:title="Followed feed as default"
+                android:title="Followed feed"
                 android:key="use_followed_feed"
-                android:summary="Only content that you follow will be shown in the home feed by default." />
+                android:summary="Disables normal Instagram algorithm. Only content of followed accounts." />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Updates">
+        <Preference
+                android:title="Autoupdate"
+                android:key="autoupdater"
+                android:summary="Click to install newest version."
+                />
     </PreferenceCategory>
 
 </PreferenceScreen>

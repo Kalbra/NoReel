@@ -36,8 +36,7 @@ if (explore_icon){
     if (cancel_button){
         cancel_button.remove();
     }
-
-}
+} 
 /** END **/
 
 /** use_followed_feed **/
