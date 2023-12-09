@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -182,8 +183,10 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
 
         webView.addJavascriptInterface(AndroidJSInterface(preferences_button), "Android")
 
-
-        WebView.setWebContentsDebuggingEnabled(true)
+        // If application is in debug mode
+        if(0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE){
+            WebView.setWebContentsDebuggingEnabled(true)
+        }
 
         webView.webChromeClient = object : WebChromeClient() {
             override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
