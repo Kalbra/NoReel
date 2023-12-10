@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -216,6 +217,11 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                 this@MainActivity.getFile.launch(intent)
 
                 return true
+            }
+
+            //Changing loading image to black
+            override fun getDefaultVideoPoster(): Bitmap? {
+                return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
             }
         }
 
