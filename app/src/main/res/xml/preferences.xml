@@ -35,11 +35,6 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Updates &amp; More">
         <Preference
-                android:title="Autoupdate"
-                android:key="autoupdater"
-                android:summary="Click to install the newest version."
-                />
-        <Preference
                 android:selectable="false"
                 android:persistent="false"
                 android:title="DISCLAIMER"
