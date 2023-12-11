@@ -1,3 +1,17 @@
+/** ALWAYS_EXECUTE **/
+const use_app_banner = document.querySelector('div[class="_acc8 _abpk"]');
+if (use_app_banner) {
+    use_app_banner.remove();
+}
+
+const settings_icon = document.querySelector('a[href="/accounts/settings/"]');
+if (settings_icon){
+    Android.setSettingsMenuButton();
+} else {
+    Android.deleteSettingsMenuButton();
+}
+/** END **/
+
 /** home_feed **/
 const article_element = document.querySelector('article[role="presentation"]');
 if (article_element){
@@ -14,7 +28,7 @@ if (reel_icon_element) {
 
 /** story_strip **/
 const story_strip = document.querySelector('div[role="menu"]');
-if (story_strip) {
+if (story_strip && !settings_icon) {
     story_strip.remove();
 }
 /** END **/
@@ -71,18 +85,3 @@ if (back_to_home) {
     back_to_home.addEventListener("click", event_listner, true);
 }
 /** END **/
-
-/** ALWAYS_EXECUTE **/
-const use_app_banner = document.querySelector('div[class="_acc8 _abpk"]');
-if (use_app_banner) {
-    use_app_banner.remove();
-}
-
-const settings_icon = document.querySelector('a[href="/accounts/settings/"]');
-if (settings_icon){
-    Android.setSettingsMenuButton();
-} else {
-    Android.deleteSettingsMenuButton();
-}
-/** END **/
-
