@@ -17,6 +17,8 @@ if(parser.hostname != "www.instagram.com" && parser.hostname != ""){
     Android.openInStdBrowser(parser.href);
     document.location.href = "https://instagram.com";
 }
+
+document.body.style.setProperty('-webkit-tap-highlight-color', "transparent");
 /** END **/
 
 /** home_feed **/
