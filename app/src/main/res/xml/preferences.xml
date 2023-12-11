@@ -35,7 +35,7 @@
                 android:defaultValue="true"
                 android:title="Audio on"
                 android:key="audio_on"
-                android:summary="Enable audio by default" />
+                android:summary="Enable audio by default." />
     </PreferenceCategory>
     <PreferenceCategory android:title="Updates &amp; More">
         <Preference
