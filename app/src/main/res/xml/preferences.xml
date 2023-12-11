@@ -26,12 +26,16 @@
                 android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Content Settings">
-
         <SwitchPreference
                 android:defaultValue="false"
                 android:title="Followed feed"
                 android:key="use_followed_feed"
                 android:summary="Disables normal Instagram algorithm. Only content of followed accounts." />
+        <SwitchPreference
+                android:defaultValue="true"
+                android:title="Audio on"
+                android:key="audio_on"
+                android:summary="Enable audio by default" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Updates &amp; More">
         <Preference
