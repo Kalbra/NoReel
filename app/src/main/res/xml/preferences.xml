@@ -37,7 +37,7 @@
                 android:key="audio_on"
                 android:summary="Enable audio by default." />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Updates &amp; More">
+    <PreferenceCategory android:title="More">
         <Preference
                 android:selectable="false"
                 android:persistent="false"
