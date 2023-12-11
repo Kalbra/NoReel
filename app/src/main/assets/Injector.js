@@ -10,6 +10,13 @@ if (settings_icon){
 } else {
     Android.deleteSettingsMenuButton();
 }
+
+var parser = document.createElement('a');
+parser.href = document.location.href;
+if(parser.hostname != "www.instagram.com" && parser.hostname != ""){
+    Android.openInStdBrowser(parser.href);
+    document.location.href = "https://instagram.com";
+}
 /** END **/
 
 /** home_feed **/

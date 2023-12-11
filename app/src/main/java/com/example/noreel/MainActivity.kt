@@ -3,6 +3,7 @@ package com.example.noreel
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
@@ -34,7 +35,9 @@ import androidx.preference.PreferenceManager
 class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
-    class AndroidJSInterface(private val preference_button: Button) {
+    class AndroidJSInterface(private val preference_button: Button, context: Context) {
+        val mContext = context
+        var AlreadyUsedURLs = emptyArray<String>()
         @JavascriptInterface
         fun log(msg: String) {
             Log.d("WebInternal", msg)
@@ -50,6 +53,19 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         fun deleteSettingsMenuButton() {
             val mainHandler = Handler(Looper.getMainLooper())
             mainHandler.post(Runnable { preference_button.visibility = View.GONE })
+        }
+
+        @JavascriptInterface
+        fun openInStdBrowser(url: String){
+            //If element was not redirected before
+            if(!AlreadyUsedURLs.contains(url)){
+                AlreadyUsedURLs += url
+
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                mContext.startActivity(browserIntent)
+
+                Log.d("StdBrowserRequest", url)
+            }
         }
     }
 
@@ -182,7 +198,8 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.settings.allowContentAccess = true
 
-        webView.addJavascriptInterface(AndroidJSInterface(preferences_button), "Android")
+        val JSINterface = AndroidJSInterface(preferences_button, this)
+        webView.addJavascriptInterface(JSINterface, "Android")
 
         // If application is in debug mode
         if(0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE){
