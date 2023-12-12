@@ -132,7 +132,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                             try {
                                 val state = preferences?.all?.getValue(identifier) as Boolean
                                 // On true execute
-                                if (identifier == "use_followed_feed") {
+                                if (identifier == "use_followed_feed" || identifier == "audio_on") {
                                     if (state) {
                                         add_future_lines = true
                                     }

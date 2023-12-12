@@ -33,7 +33,7 @@
                 android:summary="Disables normal Instagram algorithm. Only content of followed accounts." />
         <SwitchPreference
                 android:defaultValue="true"
-                android:title="Audio on"
+                android:title="Audio autoplay"
                 android:key="audio_on"
                 android:summary="Enable audio by default." />
     </PreferenceCategory>
