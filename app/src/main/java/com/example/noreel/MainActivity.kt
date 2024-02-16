@@ -198,6 +198,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.settings.allowContentAccess = true
         webView.overScrollMode = View.OVER_SCROLL_NEVER;
+        webView.isVerticalScrollBarEnabled = false;
 
         val JSINterface = AndroidJSInterface(preferences_button, this)
         webView.addJavascriptInterface(JSINterface, "Android")
