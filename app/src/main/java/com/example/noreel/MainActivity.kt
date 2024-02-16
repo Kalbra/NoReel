@@ -9,6 +9,8 @@ import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -20,6 +22,8 @@ import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -30,6 +34,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import kotlin.concurrent.thread
 
 
 class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -97,6 +102,28 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         } catch (e :NoSuchElementException){
             webView.loadUrl("https://www.instagram.com/")
         }
+    }
+
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     override fun onSharedPreferenceChanged(preferences: SharedPreferences?, p1: String?) {
@@ -249,7 +276,6 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         val mainHandler = Handler(Looper.getMainLooper())
-
         mainHandler.post(object : Runnable {
             override fun run() {
                 injectJS(webView)
@@ -262,6 +288,30 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             override fun onPageFinished(view: WebView?, url: String?) {
                 injectJS(view)
                 super.onPageFinished(view, url)
+            }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+
+                if(error!!.errorCode == -2){
+                    Log.e("WebInternal", error.description.toString() + error.errorCode)
+
+                    // Check internet loop
+                    thread {
+                        while (!isOnline(this@MainActivity)) {}
+
+                        this@MainActivity.runOnUiThread(Runnable {
+                            updateBrowser(webView, preferences)
+                        });
+                    }
+
+                    view?.loadUrl("file:///android_asset/error.html")
+                } else {
+                    super.onReceivedError(view, request, error)
+                }
             }
         }
 
