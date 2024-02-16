@@ -1,5 +1,5 @@
-# NoReel - Reduce screentime. Disable Instagram's adictive features
-This app provides most of instagram features but with the option to disable adictive features 
+# NoReel - Reduce screentime. Disable Instagram's addictive features
+This app provides most of instagram features but with the option to disable addictive features 
 for a better and healthier user experience. This drastically reduces screentime.
 
 > DISCLAMER: his app is not related to Instagram or Meta. NoReel only provides a Web browser visiting www.instagram.com
