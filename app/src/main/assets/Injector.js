@@ -70,27 +70,14 @@ if (explore_icon){
 /** END **/
 
 /** use_followed_feed **/
-const home_icon = document.querySelector('a[href="/"]');
-if (home_icon){
-    home_icon.href = "/?variant=following";
-
-    var event_listner = function(event) {
-        event.stopImmediatePropagation();
-    };
-
-    home_icon.removeEventListener("click", event_listner);
-
-    home_icon.addEventListener("click", event_listner, true);
-}
-const back_to_home = document.querySelector('div[class="x78zum5"]');
-if (back_to_home) {
-    var event_listner = function(event) {
-        window.location.href = "/?variant=following";
-        event.stopImmediatePropagation();
-    };
-
-    back_to_home.removeEventListener("click", event_listner);
-
-    back_to_home.addEventListener("click", event_listner, true);
+const for_you_switch = document.querySelector('div[aria-haspopup="menu"]');
+if(for_you_switch){
+    if(for_you_switch.getAttribute("aria-expanded") == "false"){
+        for_you_switch.click();
+    }
+    const following_button = document.querySelector('a[href="/?variant=following"]');
+    if(following_button){
+        following_button.click();
+    }
 }
 /** END **/

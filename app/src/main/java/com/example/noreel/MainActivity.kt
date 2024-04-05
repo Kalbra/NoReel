@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun updateBrowser(webView: WebView, preferences: SharedPreferences) {
         try {
             if (preferences.all.getValue("use_followed_feed") as Boolean) {
-                webView.loadUrl("https://www.instagram.com/?variant=following")
+                webView.loadUrl("https://www.instagram.com/")
             } else {
                 webView.loadUrl("https://www.instagram.com/")
             }
@@ -198,10 +198,10 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE
 
         // readExternalStorage
-        if (!(ContextCompat.checkSelfPermission(
+        if (ContextCompat.checkSelfPermission(
                 this,
                 readExternalStorage
-            ) == PackageManager.PERMISSION_GRANTED)
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(this, arrayOf(readExternalStorage), 23)
         }
@@ -221,11 +221,11 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         webView = findViewById(R.id.webview)
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
-        webView.settings.cacheMode = WebSettings.LOAD_DEFAULT
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.settings.allowContentAccess = true
         webView.overScrollMode = View.OVER_SCROLL_NEVER;
-        webView.isVerticalScrollBarEnabled = false;
+        webView.isVerticalScrollBarEnabled = false
 
         val JSINterface = AndroidJSInterface(preferences_button, this)
         webView.addJavascriptInterface(JSINterface, "Android")
