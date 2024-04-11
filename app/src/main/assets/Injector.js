@@ -1,7 +1,7 @@
 /** ALWAYS_EXECUTE **/
 const use_app_banner = document.querySelector('div[class="_acc8 _abpk"]');
 if (use_app_banner) {
-    use_app_banner.remove();
+    use_app_banner.style.display = "none";
 }
 
 const settings_icon = document.querySelector('a[href="/accounts/settings/"]');
@@ -24,21 +24,21 @@ document.body.style.setProperty('-webkit-tap-highlight-color', "transparent");
 /** home_feed **/
 const article_element = document.querySelector('article[role="presentation"]');
 if (article_element){
-    article_element.parentElement.remove();
+    article_element.parentElement.style.display = "none";
 }
 /** END **/
 
 /** reel_feed **/
 const reel_icon_element = document.querySelector('a[href="/reels/"]');
 if (reel_icon_element) {
-    reel_icon_element.remove();
+    reel_icon_element.style.display = "none";
 }
 /** END **/
 
 /** story_strip **/
 const story_strip = document.querySelector('div[role="menu"]');
 if (story_strip && !settings_icon) {
-    story_strip.remove();
+    story_strip.style.display = "none";
 }
 /** END **/
 
@@ -64,7 +64,7 @@ if (explore_icon){
 
     const cancel_button = document.querySelector('div[class="x9f619 xjbqb8w x78zum5 x168nmei x13lgxp2 x5pf9jr xo71vjh x16n37ib x1n2onr6 x1plvlek xryxfnj x1c4vz4f x2lah0s xdt5ytf xqjyukv x1qjc9v5 x1oa3qoh xl56j7k"]');
     if (cancel_button){
-        cancel_button.remove();
+        cancel_button.style.display = "none";
     }
 } 
 /** END **/

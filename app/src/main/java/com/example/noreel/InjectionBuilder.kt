@@ -111,7 +111,6 @@ class InjectionBuilder(
                             } catch (e: NoSuchElementException) {
                                 Log.w("InjectionBuilder", "Preference '${identifier}' not found")
                             }
-
                         }
                     }
                     // Normal content to be added
