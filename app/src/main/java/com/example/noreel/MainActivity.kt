@@ -18,7 +18,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.webkit.ConsoleMessage
-import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -37,43 +36,8 @@ import androidx.preference.PreferenceManager
 import kotlin.concurrent.thread
 
 
-class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
-
-    class AndroidJSInterface(private val preference_button: Button, context: Context) {
-        val mContext = context
-        var AlreadyUsedURLs = emptyArray<String>()
-        @JavascriptInterface
-        fun log(msg: String) {
-            Log.d("WebInternal", msg)
-        }
-
-        @JavascriptInterface
-        fun setSettingsMenuButton() {
-            val mainHandler = Handler(Looper.getMainLooper())
-            mainHandler.post(Runnable { preference_button.visibility = View.VISIBLE })
-        }
-
-        @JavascriptInterface
-        fun deleteSettingsMenuButton() {
-            val mainHandler = Handler(Looper.getMainLooper())
-            mainHandler.post(Runnable { preference_button.visibility = View.GONE })
-        }
-
-        @JavascriptInterface
-        fun openInStdBrowser(url: String){
-            //If element was not redirected before
-            if(!AlreadyUsedURLs.contains(url)){
-                AlreadyUsedURLs += url
-
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                mContext.startActivity(browserIntent)
-
-                Log.d("StdBrowserRequest", url)
-            }
-        }
-    }
-
 
     private lateinit var webView: WebView
 
@@ -92,16 +56,8 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun updateBrowser(webView: WebView, preferences: SharedPreferences) {
-        try {
-            if (preferences.all.getValue("use_followed_feed") as Boolean) {
-                webView.loadUrl("https://www.instagram.com/")
-            } else {
-                webView.loadUrl("https://www.instagram.com/")
-            }
-        } catch (e :NoSuchElementException){
-            webView.loadUrl("https://www.instagram.com/")
-        }
+    private fun updateBrowser(webView: WebView) {
+        webView.loadUrl("https://www.instagram.com/")
     }
 
     fun isOnline(context: Context): Boolean {
@@ -128,65 +84,8 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onSharedPreferenceChanged(preferences: SharedPreferences?, p1: String?) {
         Log.d("Settings", "Changed: ${preferences?.all?.entries?.toTypedArray().contentToString()}")
-        injector_content = createInjectionString(preferences)
-    }
-
-    private fun createInjectionString(preferences: SharedPreferences?): String {
-        val reader = application.assets.open("Injector.js").bufferedReader()
-        reader.useLines {
-            reader.use {
-                var add_future_lines = false
-                var injector_string = ""
-                for (raw_line in it.lines().toArray()) {
-                    val line: String = raw_line.toString()
-
-                    if (line.startsWith("/**")) {
-                        //Using the space to split the element and to find out its identifier e.g REEL_FEED
-                        val identifier = line.split(" ").toTypedArray()[1]
-
-                        // No lines till the next identifier
-                        if (identifier == "END") {
-                            add_future_lines = false
-                        }
-
-                        // No checking for preference rules at ALWAYS_EXECUTE
-                        else if (identifier == "ALWAYS_EXECUTE") {
-                            add_future_lines = true
-                        }
-
-                        // Settings Identifier was found
-                        else {
-                            try {
-                                val state = preferences?.all?.getValue(identifier) as Boolean
-                                // On true execute
-                                if (identifier == "use_followed_feed" || identifier == "audio_on") {
-                                    if (state) {
-                                        add_future_lines = true
-                                    }
-                                }
-                                // On false execute
-                                else {
-                                    if (!state) {
-                                        add_future_lines = true
-                                    }
-                                }
-                            } catch (e: NoSuchElementException){
-                                Log.w("InjectionCompiler", "Preference '${identifier}' not found")
-                            }
-
-                        }
-                    }
-                    // Normal content to be added
-                    else {
-                        // Checking if this content line (no identifier) should be added
-                        if (add_future_lines && line != "") {
-                            injector_string += line.trim()
-                        }
-                    }
-                }
-                Log.d("InjectionCompiler", injector_string)
-                return injector_string
-            }
+        InjectionBuilder(application, preferences!!).getCode() {
+            injector_content = it
         }
     }
 
@@ -209,7 +108,6 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         preferences.registerOnSharedPreferenceChangeListener(this)
 
-        injector_content = createInjectionString(preferences)
 
         val preferences_button = findViewById<Button>(R.id.preferencesButton)
 
@@ -217,6 +115,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             val settings_intent = Intent(this, SettingsActivity::class.java)
             startActivity(settings_intent)
         }
+        onSharedPreferenceChanged(preferences, "")
 
         webView = findViewById(R.id.webview)
         webView.settings.javaScriptEnabled = true
@@ -227,8 +126,8 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         webView.overScrollMode = View.OVER_SCROLL_NEVER;
         webView.isVerticalScrollBarEnabled = false
 
-        val JSINterface = AndroidJSInterface(preferences_button, this)
-        webView.addJavascriptInterface(JSINterface, "Android")
+        val JSInterface = AndroidJSInterface(preferences_button, this)
+        webView.addJavascriptInterface(JSInterface, "Android")
 
         // If application is in debug mode
         if(0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE){
@@ -295,20 +194,21 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                 request: WebResourceRequest?,
                 error: WebResourceError?
             ) {
-
+                // Not working on Pixel3a API34 extension level 7 on slow internet
                 if(error!!.errorCode == -2){
                     Log.e("WebInternal", error.description.toString() + error.errorCode)
+
+                    view?.loadUrl("file:///android_asset/error.html")
 
                     // Check internet loop
                     thread {
                         while (!isOnline(this@MainActivity)) {}
 
                         this@MainActivity.runOnUiThread(Runnable {
-                            updateBrowser(webView, preferences)
+                            updateBrowser(webView)
                         });
                     }
 
-                    view?.loadUrl("file:///android_asset/error.html")
                 } else {
                     super.onReceivedError(view, request, error)
                 }
@@ -323,7 +223,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         })
 
-        updateBrowser(webView, preferences)
+        updateBrowser(webView)
     }
 }
 

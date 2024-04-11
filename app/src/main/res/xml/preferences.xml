@@ -3,7 +3,6 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="View Settings">
-
         <SwitchPreference
                 android:title="Home feed"
                 android:key="home_feed"
@@ -36,6 +35,13 @@
                 android:title="Audio autoplay"
                 android:key="audio_on"
                 android:summary="Enable audio by default." />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Injection Settings">
+        <SwitchPreference
+                android:defaultValue="true"
+                android:title="Remote script fetching"
+                android:key="remote_fetching"
+                android:summary="Fetch the newest version of the injection script via Github." />
     </PreferenceCategory>
     <PreferenceCategory android:title="More">
         <Preference
