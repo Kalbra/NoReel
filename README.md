@@ -36,7 +36,7 @@ Limitations are:
 - Not available for IOS / Apple
 - Long content loading time
 - No instagram camera (only file upload)
-- Less prettier UI than original instagram app
+- Less pretty UI than original instagram app
 - General story creation limitations
   - No filters
   - No stickers
