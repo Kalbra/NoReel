@@ -3,6 +3,8 @@ package com.example.noreel
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,6 +14,7 @@ import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -30,9 +33,11 @@ import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import src.UpdateChecker
 import kotlin.concurrent.thread
 
 
@@ -89,6 +94,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +123,34 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         }
         onSharedPreferenceChanged(preferences, "")
 
+        val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+
+        val notificationPermission = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.VIBRATE
+        )
+        if (notificationPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                arrayOf(Manifest.permission.VIBRATE),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        }
+
+        val name = "Updates"
+        val descriptionText = "Information if there is an update available"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("Update", name, importance).apply {
+            description = descriptionText
+        }
+
+        // Register the channel with the system.
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
+        val updateChecker = UpdateChecker(this)
+        updateChecker.fetchRemote()
+
         webView = findViewById(R.id.webview)
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
@@ -130,98 +164,103 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         webView.addJavascriptInterface(JSInterface, "Android")
 
         // If application is in debug mode
-        if(0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE){
+        if (0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
 
-        webView.webChromeClient = object : WebChromeClient() {
-            override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                Log.d(
-                    "WebInternal",
-                    "${consoleMessage.message()} -- Line: ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}"
-                )
-                return true
+        webView.webChromeClient =
+            object : WebChromeClient() {
+                override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+                    Log.d(
+                        "WebInternal",
+                        "${consoleMessage.message()} -- Line: ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}"
+                    )
+                    return true
+                }
+
+                override fun onPermissionRequest(request: PermissionRequest?) {
+                    Log.w("WebInternal", request.toString())
+                    request?.grant(request.resources)
+                }
+
+                override fun onShowFileChooser(
+                    webView: WebView?,
+                    filePathCallback: ValueCallback<Array<Uri>>?,
+                    fileChooserParams: FileChooserParams?
+                ): Boolean {
+                    Log.d("WebInternal", "New File dialog")
+                    this@MainActivity.filePathCallback = filePathCallback
+
+                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+                    intent.type = "*/*"
+
+                    this@MainActivity.getFile.launch(intent)
+
+                    return true
+                }
+
+                //Changing loading image to black
+                override fun getDefaultVideoPoster(): Bitmap? {
+                    return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+                }
             }
-
-            override fun onPermissionRequest(request: PermissionRequest?) {
-                Log.w("WebInternal", request.toString())
-                request?.grant(request.resources)
-            }
-
-            override fun onShowFileChooser(
-                webView: WebView?,
-                filePathCallback: ValueCallback<Array<Uri>>?,
-                fileChooserParams: FileChooserParams?
-            ): Boolean {
-                Log.d("WebInternal", "New File dialog")
-                this@MainActivity.filePathCallback = filePathCallback
-
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.type = "*/*"
-
-                this@MainActivity.getFile.launch(intent)
-
-                return true
-            }
-
-            //Changing loading image to black
-            override fun getDefaultVideoPoster(): Bitmap? {
-                return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-            }
-        }
 
         fun injectJS(webview: WebView?) {
             webview?.loadUrl("javascript:(function f(){${injector_content}})()")
         }
 
         val mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.post(object : Runnable {
-            override fun run() {
-                injectJS(webView)
-                mainHandler.postDelayed(this, 200)
-            }
-        })
+        mainHandler.post(
+            object : Runnable {
+                override fun run() {
+                    injectJS(webView)
+                    mainHandler.postDelayed(this, 200)
+                }
+            })
 
         //Injection if the page is fully loaded
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                injectJS(view)
-                super.onPageFinished(view, url)
-            }
+        webView.webViewClient =
+            object : WebViewClient() {
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    injectJS(view)
+                    super.onPageFinished(view, url)
+                }
 
-            override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?
-            ) {
-                // Not working on Pixel3a API34 extension level 7 on slow internet
-                if(error!!.errorCode == -2){
-                    Log.e("WebInternal", error.description.toString() + error.errorCode)
+                override fun onReceivedError(
+                    view: WebView?,
+                    request: WebResourceRequest?,
+                    error: WebResourceError?
+                ) {
+                    // Not working on Pixel3a API34 extension level 7 on slow internet
+                    if (error!!.errorCode == -2) {
+                        Log.e("WebInternal", error.description.toString() + error.errorCode)
 
-                    view?.loadUrl("file:///android_asset/error.html")
+                        view?.loadUrl("file:///android_asset/error.html")
 
-                    // Check internet loop
-                    thread {
-                        while (!isOnline(this@MainActivity)) {}
+                        // Check internet loop
+                        thread {
+                            while (!isOnline(this@MainActivity)) {
+                            }
 
-                        this@MainActivity.runOnUiThread(Runnable {
-                            updateBrowser(webView)
-                        });
+                            this@MainActivity.runOnUiThread(Runnable {
+                                updateBrowser(webView)
+                            });
+                        }
+
+                    } else {
+                        super.onReceivedError(view, request, error)
                     }
-
-                } else {
-                    super.onReceivedError(view, request, error)
                 }
             }
-        }
 
-        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (webView.canGoBack()) {
-                    webView.goBack()
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (webView.canGoBack()) {
+                        webView.goBack()
+                    }
                 }
-            }
-        })
+            })
 
         updateBrowser(webView)
     }
