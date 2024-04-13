@@ -69,7 +69,7 @@ class UpdateChecker(val context: Context) {
     private fun compareVersions(newestVersionCode: Int) {
         val LocalVersionCode: Int = BuildConfig.VERSION_CODE
         Log.d("Update", "Local version code: ${LocalVersionCode.toString()}; Newest version code: ${newestVersionCode}")
-        if(true){ //LocalVersionCode < newestVersionCode
+        if(LocalVersionCode < newestVersionCode){ //LocalVersionCode < newestVersionCode
             val webpageUrl = "https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk"
             val notificationIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webpageUrl))
             val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE) //Problem
