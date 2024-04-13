@@ -97,7 +97,6 @@ class UpdateChecker(val context: Context) {
                     return
                 }
                 notify(1, builder.build())
-                Log.d("Update", "Notification sent")
             }
         }
     }
