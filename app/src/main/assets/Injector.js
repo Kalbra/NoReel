@@ -4,7 +4,7 @@ if (use_app_banner) {
     use_app_banner.style.display = "none";
 }
 
-const settings_icon = document.querySelector('a[href="/accounts/settings/"]');
+const settings_icon = document.querySelector('a[href="/accounts/settings/?entrypoint=profile"]');
 if (settings_icon){
     Android.setSettingsMenuButton();
 } else {
