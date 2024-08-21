@@ -1,4 +1,7 @@
 # NoReel - Reduce screentime. Disable Instagram's addictive features
+[![Github All Releases](https://img.shields.io/github/downloads/Kalbra/NoReel/total.svg)](https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk)
+[![Github Current Releases](https://img.shields.io/github/v/release/Kalbra/NoReel)](https://github.com/Kalbra/NoReel/releases/latest)
+
 This app provides most of instagram features but with the option to disable addictive features 
 for a better and healthier user experience. This drastically reduces screentime.
 
