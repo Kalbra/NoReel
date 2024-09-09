@@ -9,6 +9,12 @@ for a better and healthier user experience. This drastically reduces screentime.
 >  with browser modifications such as removing the Reel icon UI component. NoReel is not intended to block ads or to prevent revenue.
 >  NoReel does not interfere Instagram data usage. NoReel's data policy applies as for visiting www.instagram.com.
 
+## Screenshots
+| Home Feed | Explore Page | Settings Page |
+|:---------:|:------------:|:-------------:|
+| <img src="/docs/home_page.png" alt="Home Feed" width="250"/> | <img src="docs/explore_page.png" alt="Explore Page" width="250"/> | <img src="docs/settings_page.png" alt="Settings Page" width="250"/> |
+| The normal home screen. At this picture [Only followed feed](#only-followed-feed) is activated. | The explore/search only with search due to [Explore feed deactivation](#explore-feed-deactivation). | The settings/account page. You can access the NoReel settings <br> via the orange button and customize NoReels [features](#features). 
+
 ## Features
 ### Reel feed deactivation
 With this feature you can deativate the reel feed. So you never spend hours scrolling through the feed again wasting your time.
