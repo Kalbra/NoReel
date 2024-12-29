@@ -14,6 +14,11 @@
                 android:summary="The strip where all stories are contained at the top of the app. Does not disable stories in general."
                 android:defaultValue="true" />
         <SwitchPreference
+                android:title="Show unread message count"
+                android:key="show_unread_message_count"
+                android:summary="Show the red unread message notification."
+                android:defaultValue="true" />
+        <SwitchPreference
                 android:title="Reel feed"
                 android:key="reel_feed"
                 android:summary="The feed where short videos / reels are played"
