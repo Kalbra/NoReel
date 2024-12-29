@@ -43,6 +43,7 @@ import kotlin.concurrent.thread
 
 open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private var settingsChanged: Boolean = false
 
     private lateinit var webView: WebView
 
@@ -94,6 +95,15 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (settingsChanged) {
+            settingsChanged = false
+            updateBrowser(webView)
+            Log.d("Settings", "Reload browser")
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +128,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         val preferences_button = findViewById<Button>(R.id.preferencesButton)
 
         preferences_button.setOnClickListener {
+            settingsChanged = true
             val settings_intent = Intent(this, SettingsActivity::class.java)
             startActivity(settings_intent)
         }
