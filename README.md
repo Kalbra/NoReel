@@ -17,16 +17,16 @@ for a better and healthier user experience. This drastically reduces screentime.
 
 ## Features
 ### Reel feed deactivation
-With this feature you can deativate the reel feed. So you never spend hours scrolling through the feed again wasting your time.
+With this feature you can deactivate the reel feed. So you never spend hours scrolling through the feed again wasting your time.
 But when friends send you reels, you can only watch them. So only the best content for you. 
 
 ### Only followed feed
-You get constent that you are not subscribed to in your home feed? Not if you active Followed feed. 
+You get content that you are not subscribed to in your home feed? Not if you active Followed feed. 
 Then you will only be shown content that is really useful to you. The content of your followers, your friends!
 You'll see how quickly you can bring yourself up to date without random content
 
 ### Explore feed deactivation
-The explore feed is similar to the reel feed: addictive. so why not deactivate it? You will have more time to spend of meaningful things.
+The explore feed is similar to the reel feed: addictive. So why not deactivate it? You will have more time to spend of meaningful things.
 
 ### Story strips deactivation
 You don't want to spend hours swiping through stories. Then this is your feature! When deactivating the story strip you will no longer see stories at you home screen.
@@ -34,7 +34,10 @@ But you are able to see stories via the profile if you really want to see THAT s
 
 ### Home feed deactivation
 You have enough of scrolling through the home feed and don't want to use the Followed feed as well? Then you can deactivate the home feed completely.
-This feature is not related to Story strips, so if you want to see only stories you can. 
+This feature is not related to Story strips, so if you want to see only stories you can.
+
+### Disable message notification icon
+It can be distracting to be constantly reminded of messages that you have unread. You can deactivate the red icon that shows your unread messages and interact with your friends and followers more organically.
 
 ## Limitations
 The app uses the web version of instagram and their limitations.
@@ -56,7 +59,7 @@ Limitations are:
 ## Installation and releases
 The app is only provided as APK file, which is the application format for android apps.
 Download [NoReel.apk](https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk) by clicking on it. Note that android will warn you about the app several times. 
-You have to ignore these warnings to be able instaling the app.
+You have to ignore these warnings to be able installing the app.
 
 The APK file must be installed manually. A tutorial how to install an APK file is linked 
 [here](https://www.lifewire.com/install-apk-on-android-4177185). 

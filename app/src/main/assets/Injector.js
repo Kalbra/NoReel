@@ -81,3 +81,10 @@ if(for_you_switch){
     }
 }
 /** END **/
+
+/** show_unread_message_count **/
+const unread_message_count = document.querySelector('div[class="html-div xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x14vhib7 xnwf7zb x40j3uw x1s7lred x15gyhx8 x6s0dn4 x78zum5 xmix8c7 xl56j7k x1bby3tf x16xo4sp x1yhmmig xeqyd3i xyb01ml xdn568n x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi xamhcws xol2nv xlxy82 x19p7ews"]');
+if(unread_message_count){
+    unread_message_count.style.display = "none";
+}
+/** END **/
