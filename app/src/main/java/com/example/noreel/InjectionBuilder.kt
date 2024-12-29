@@ -2,12 +2,15 @@ package com.example.noreel
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.content.pm.ApplicationInfo
 import android.util.Log
+import android.webkit.WebView
 import java.io.BufferedInputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.CountDownLatch
+
 
 class InjectionBuilder(
     private val application: Application,
@@ -48,7 +51,13 @@ class InjectionBuilder(
     }
 
     fun getCode(callback: (String) -> Unit) {
-        val state = getState()
+        var state = getState()
+
+        // If application is in debug mode
+        if (0 != application.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) {
+            state = false
+        }
+
         if (state) { //remote
             fetchRemote { callback(it) }
             Log.d("InjectionBuilder", "Use remote script")
