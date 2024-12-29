@@ -61,12 +61,11 @@ if (explore_icon){
     explore_icon.removeEventListener("click", event_listner);
 
     explore_icon.addEventListener("click", event_listner, true);
-
-    const cancel_button = document.querySelector('div[class="x9f619 xjbqb8w x78zum5 x168nmei x13lgxp2 x5pf9jr xo71vjh x16n37ib x1n2onr6 x1plvlek xryxfnj x1c4vz4f x2lah0s xdt5ytf xqjyukv x1qjc9v5 x1oa3qoh xl56j7k"]');
-    if (cancel_button){
-        cancel_button.style.display = "none";
-    }
-} 
+}
+const cancel_button = document.querySelector('div[class="x9f619 xjbqb8w x78zum5 x168nmei x13lgxp2 x5pf9jr xo71vjh x16n37ib x1n2onr6 x1plvlek xryxfnj x1c4vz4f x2lah0s xdt5ytf xqjyukv x1qjc9v5 x1oa3qoh xl56j7k"]');
+if (cancel_button){
+    cancel_button.style.display = "none";
+}
 /** END **/
 
 /** use_followed_feed **/
