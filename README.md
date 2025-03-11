@@ -15,6 +15,16 @@ for a better and healthier user experience. This drastically reduces screentime.
 | <img src="/docs/home_page.png" alt="Home Feed" width="250"/> | <img src="docs/explore_page.png" alt="Explore Page" width="250"/> | <img src="docs/settings_page.png" alt="Settings Page" width="250"/> |
 | The normal home screen. At this picture [Only followed feed](#only-followed-feed) is activated. | The explore/search only with search due to [Explore feed deactivation](#explore-feed-deactivation). | The settings/account page. You can access the NoReel settings <br> via the orange button and customize NoReels [features](#features). 
 
+## Installation and releases
+The app is only provided as APK file, which is the application format for android apps.
+Download [NoReel.apk](https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk) by clicking on it. Note that android will warn you about the app several times. 
+You have to ignore these warnings to be able installing the app.
+
+The APK file must be installed manually. A tutorial how to install an APK file is linked 
+[here](https://www.lifewire.com/install-apk-on-android-4177185). 
+
+For more versions visit the [relase tab](https://github.com/Kalbra/NoReel/releases).
+
 ## Features
 ### Reel feed deactivation
 With this feature you can deactivate the reel feed. So you never spend hours scrolling through the feed again wasting your time.
@@ -55,16 +65,6 @@ Limitations are:
   - No music
   - (some others)
 
-
-## Installation and releases
-The app is only provided as APK file, which is the application format for android apps.
-Download [NoReel.apk](https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk) by clicking on it. Note that android will warn you about the app several times. 
-You have to ignore these warnings to be able installing the app.
-
-The APK file must be installed manually. A tutorial how to install an APK file is linked 
-[here](https://www.lifewire.com/install-apk-on-android-4177185). 
-
-For more versions visit the [relase tab](https://github.com/Kalbra/NoReel/releases).
 ### Contribution
 Feel free to commit to the project be it feedback, feature request, 
 PR or any other form of contribution. Please use the issue tab for communication or 
