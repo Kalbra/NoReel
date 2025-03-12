@@ -5,7 +5,7 @@
 This app provides most of instagram features but with the option to disable addictive features 
 for a better and healthier user experience. This drastically reduces screentime.
 
-> DISCLAMER: his app is not related to Instagram or Meta. NoReel only provides a Web browser visiting www.instagram.com
+> DISCLAMER: This app is not related to Instagram or Meta. NoReel only provides a Web browser visiting www.instagram.com
 >  with browser modifications such as removing the Reel icon UI component. NoReel is not intended to block ads or to prevent revenue.
 >  NoReel does not interfere Instagram data usage. NoReel's data policy applies as for visiting www.instagram.com.
 
