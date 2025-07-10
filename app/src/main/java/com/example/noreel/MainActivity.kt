@@ -49,7 +49,6 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
 
     var injector_content = ""
 
-
     val getFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_CANCELED) {
             filePathCallback?.onReceiveValue(null)
@@ -168,7 +167,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.settings.allowContentAccess = true
-        webView.overScrollMode = View.OVER_SCROLL_NEVER;
+        webView.overScrollMode = View.OVER_SCROLL_NEVER
         webView.isVerticalScrollBarEnabled = false
 
         val JSInterface = AndroidJSInterface(preferences_button, this)
@@ -221,6 +220,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         }
 
         val mainHandler = Handler(Looper.getMainLooper())
+
         mainHandler.post(
             object : Runnable {
                 override fun run() {
@@ -255,7 +255,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
 
                             this@MainActivity.runOnUiThread(Runnable {
                                 updateBrowser(webView)
-                            });
+                            })
                         }
 
                     } else {
@@ -276,4 +276,3 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         updateBrowser(webView)
     }
 }
-
