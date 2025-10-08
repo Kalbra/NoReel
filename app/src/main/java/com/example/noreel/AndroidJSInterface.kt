@@ -5,13 +5,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import java.util.concurrent.Callable
 import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
 import android.widget.Button
 
-class AndroidJSInterface(private val preference_button: Button, val mContext: Context) {
+class AndroidJSInterface(private val preference_button: Button, val mContext: Context, private val updateViewport: Runnable) {
     var AlreadyUsedURLs = emptyArray<String>()
+    val mainHandler = Handler(Looper.getMainLooper())
+
     @JavascriptInterface
     fun log(msg: String) {
         Log.d("WebInternal", msg)
@@ -19,13 +22,11 @@ class AndroidJSInterface(private val preference_button: Button, val mContext: Co
 
     @JavascriptInterface
     fun setSettingsMenuButton() {
-        val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.post(Runnable { preference_button.visibility = View.VISIBLE })
     }
 
     @JavascriptInterface
     fun deleteSettingsMenuButton() {
-        val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.post(Runnable { preference_button.visibility = View.GONE })
     }
 
@@ -40,5 +41,11 @@ class AndroidJSInterface(private val preference_button: Button, val mContext: Co
 
             Log.d("StdBrowserRequest", url)
         }
+    }
+
+    @JavascriptInterface
+    fun reloadPage(){
+        mainHandler.post(updateViewport)
+        Log.d("WebInternal", "Reloading triggered")
     }
 }

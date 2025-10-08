@@ -61,7 +61,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         }
     }
 
-    private fun updateBrowser(webView: WebView) {
+    fun updateBrowser(webView: WebView) {
         webView.loadUrl("https://www.instagram.com/")
     }
 
@@ -170,7 +170,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         webView.overScrollMode = View.OVER_SCROLL_NEVER
         webView.isVerticalScrollBarEnabled = false
 
-        val JSInterface = AndroidJSInterface(preferences_button, this)
+        val JSInterface = AndroidJSInterface(preferences_button, this, Runnable { updateBrowser(webView) })
         webView.addJavascriptInterface(JSInterface, "Android")
 
         // If application is in debug mode
@@ -178,42 +178,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
             WebView.setWebContentsDebuggingEnabled(true)
         }
 
-        webView.webChromeClient =
-            object : WebChromeClient() {
-                override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                    Log.d(
-                        "WebInternal",
-                        "${consoleMessage.message()} -- Line: ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}"
-                    )
-                    return true
-                }
-
-                override fun onPermissionRequest(request: PermissionRequest?) {
-                    Log.w("WebInternal", request.toString())
-                    request?.grant(request.resources)
-                }
-
-                override fun onShowFileChooser(
-                    webView: WebView?,
-                    filePathCallback: ValueCallback<Array<Uri>>?,
-                    fileChooserParams: FileChooserParams?
-                ): Boolean {
-                    Log.d("WebInternal", "New File dialog")
-                    this@MainActivity.filePathCallback = filePathCallback
-
-                    val intent = Intent(Intent.ACTION_GET_CONTENT)
-                    intent.type = "*/*"
-
-                    this@MainActivity.getFile.launch(intent)
-
-                    return true
-                }
-
-                //Changing loading image to black
-                override fun getDefaultVideoPoster(): Bitmap? {
-                    return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-                }
-            }
+        webView.webChromeClient = ChromeViewport()
 
         fun injectJS(webview: WebView?) {
             webview?.loadUrl("javascript:(function f(){${injector_content}})()")
@@ -229,40 +194,7 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
                 }
             })
 
-        //Injection if the page is fully loaded
-        webView.webViewClient =
-            object : WebViewClient() {
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    injectJS(view)
-                    super.onPageFinished(view, url)
-                }
-
-                override fun onReceivedError(
-                    view: WebView?,
-                    request: WebResourceRequest?,
-                    error: WebResourceError?
-                ) {
-                    // Not working on Pixel3a API34 extension level 7 on slow internet
-                    if (error!!.errorCode == -2) {
-                        Log.e("WebInternal", error.description.toString() + error.errorCode)
-
-                        view?.loadUrl("file:///android_asset/error.html")
-
-                        // Check internet loop
-                        thread {
-                            while (!isOnline(this@MainActivity)) {
-                            }
-
-                            this@MainActivity.runOnUiThread(Runnable {
-                                updateBrowser(webView)
-                            })
-                        }
-
-                    } else {
-                        super.onReceivedError(view, request, error)
-                    }
-                }
-            }
+        webView.webViewClient = WebViewViewport()
 
         onBackPressedDispatcher.addCallback(
             object : OnBackPressedCallback(true) {
