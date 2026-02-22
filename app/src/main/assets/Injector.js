@@ -22,7 +22,7 @@ document.body.style.setProperty('-webkit-tap-highlight-color', "transparent");
 /** END **/
 
 /** home_feed **/
-const article_element = document.querySelector('article[role="presentation"]');
+const article_element = document.querySelector('div[class="html-div xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x9f619 xf68679 x5lhr3w xjbqb8w x78zum5 x15mokao x1ga7v0g x16uus16 xbiv7yw x1uhb9sk x1plvlek xryxfnj x1c4vz4f x2lah0s xdt5ytf xqjyukv x1qjc9v5 x1oa3qoh x1nhvcw1"]');
 if (article_element){
     article_element.parentElement.style.display = "none";
 }
@@ -36,7 +36,7 @@ if (reel_icon_element) {
 /** END **/
 
 /** story_strip **/
-const story_strip = document.querySelector('div[role="menu"]');
+const story_strip = document.querySelector('div[data-pagelet="story_tray"]');
 if (story_strip && !settings_icon) {
     story_strip.style.display = "none";
 }
