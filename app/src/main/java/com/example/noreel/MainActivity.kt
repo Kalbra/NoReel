@@ -123,7 +123,6 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         preferences.registerOnSharedPreferenceChangeListener(this)
 
-
         val preferences_button = findViewById<Button>(R.id.preferencesButton)
 
         preferences_button.setOnClickListener {
