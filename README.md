@@ -2,8 +2,10 @@
 [![Github All Releases](https://img.shields.io/github/downloads/Kalbra/NoReel/total.svg)](https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk)
 [![Github Current Releases](https://img.shields.io/github/v/release/Kalbra/NoReel)](https://github.com/Kalbra/NoReel/releases/latest)
 
-This app provides most of instagram features but with the option to disable addictive features 
-for a better and healthier user experience. This drastically reduces screentime.
+### [✨ Click here to download latest Version ✨](https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk)
+
+This app provides most of Instagram features but with the option to disable addictive features 
+for a better and healthier user experience. This drastically reduces screen time.
 
 > DISCLAMER: This app is not related to Instagram or Meta. NoReel only provides a Web browser visiting www.instagram.com
 >  with browser modifications such as removing the Reel icon UI component. NoReel is not intended to block ads or to prevent revenue.
@@ -13,10 +15,10 @@ for a better and healthier user experience. This drastically reduces screentime.
 | Home Feed | Explore Page | Settings Page |
 |:---------:|:------------:|:-------------:|
 | <img src="/docs/home_page.png" alt="Home Feed" width="250"/> | <img src="docs/explore_page.png" alt="Explore Page" width="250"/> | <img src="docs/settings_page.png" alt="Settings Page" width="250"/> |
-| The normal home screen. At this picture [Only followed feed](#only-followed-feed) is activated. | The explore/search only with search due to [Explore feed deactivation](#explore-feed-deactivation). | The settings/account page. You can access the NoReel settings <br> via the orange button and customize NoReels [features](#features). 
+| The normal home screen. At this picture [Only followed feed](#only-followed-feed) is activated. | The explore/search only with search due to [Explore feed deactivation](#explore-feed-deactivation). | The settings/account page. You can access the NoReel settings <br> via the orange button and customize NoReels [features](#features).
 
 ## Installation and releases
-The app is only provided as APK file, which is the application format for android apps.
+The app is only provided as APK file, which is the application format for Android apps.
 Download [NoReel.apk](https://github.com/Kalbra/NoReel/releases/latest/download/NoReel.apk) by clicking on it. Note that android will warn you about the app several times. 
 You have to ignore these warnings to be able installing the app.
 
@@ -57,13 +59,10 @@ please feel free to write an [issue](https://github.com/Kalbra/noreel/issues/new
 Limitations are:
 - Not available for IOS / Apple
 - Long content loading time
-- No instagram camera (only file upload)
-- Less pretty UI than original instagram app
-- General story creation limitations
-  - No filters
-  - No stickers
-  - No music
-  - (some others)
+- No Instagram camera (only file upload)
+- Web UI instead of Instagram app UI 
+- No option to create content [#46](https://github.com/Kalbra/NoReel/issues/46)
+
 
 ### Contribution
 Feel free to commit to the project be it feedback, feature request, 
