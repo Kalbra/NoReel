@@ -74,6 +74,74 @@ if(window.location == "https://www.instagram.com/"){
 }
 /** END **/
 
+/** suggested_posts **/
+const suggestedThreeDayMs = 3 * 24 * 60 * 60 * 1000;
+const suggestedCutoff = Date.now() - suggestedThreeDayMs;
+const suggestedMain = document.querySelector('main');
+if (suggestedMain) {
+    let suggestedSectionStart = null;
+    const suggestedArticles = suggestedMain.querySelectorAll('article');
+    for (let suggestedIdx = 0; suggestedIdx < suggestedArticles.length; suggestedIdx++) {
+        const suggestedSibling = suggestedArticles[suggestedIdx].nextElementSibling;
+        if (suggestedSibling && suggestedSibling.querySelector('img[src*="illo-confirm-refresh"]')) {
+            suggestedSectionStart = suggestedSibling;
+            break;
+        }
+        if (suggestedArticles[suggestedIdx].querySelector('img[src*="illo-confirm-refresh"]') && !suggestedArticles[suggestedIdx].querySelector('time[datetime]')) {
+            suggestedSectionStart = suggestedArticles[suggestedIdx];
+            break;
+        }
+    }
+    if (!suggestedSectionStart) {
+        const suggestedRefreshImgs = suggestedMain.querySelectorAll('img[src*="illo-confirm-refresh"]');
+        for (let suggestedIdx = 0; suggestedIdx < suggestedRefreshImgs.length; suggestedIdx++) {
+            let suggestedWrap = suggestedRefreshImgs[suggestedIdx].parentElement;
+            for (let suggestedDepth = 0; suggestedDepth < 10 && suggestedWrap && suggestedWrap !== suggestedMain; suggestedDepth++) {
+                if (!suggestedWrap.querySelector('time[datetime]')) {
+                    suggestedSectionStart = suggestedWrap;
+                    break;
+                }
+                suggestedWrap = suggestedWrap.parentElement;
+            }
+            if (suggestedSectionStart) break;
+        }
+    }
+    if (suggestedSectionStart) {
+        let suggestedGateOpen = false;
+        const suggestedRecentFollowed = [];
+        for (let suggestedIdx = 0; suggestedIdx < suggestedArticles.length; suggestedIdx++) {
+            const suggestedArticle = suggestedArticles[suggestedIdx];
+            if (suggestedSectionStart.compareDocumentPosition(suggestedArticle) & Node.DOCUMENT_POSITION_FOLLOWING) continue;
+            if (suggestedArticle.querySelector('img[src*="illo-confirm-refresh"]')) continue;
+            const suggestedTimeEl = suggestedArticle.querySelector('time[datetime]');
+            if (!suggestedTimeEl) continue;
+            const suggestedTs = Date.parse(suggestedTimeEl.getAttribute('datetime'));
+            if (!isNaN(suggestedTs) && suggestedTs >= suggestedCutoff) suggestedRecentFollowed.push(suggestedArticle);
+        }
+        if (suggestedRecentFollowed.length > 0) {
+            suggestedGateOpen = true;
+            for (let suggestedIdx = 0; suggestedIdx < suggestedRecentFollowed.length; suggestedIdx++) {
+                if (suggestedRecentFollowed[suggestedIdx].getBoundingClientRect().bottom > window.innerHeight) {
+                    suggestedGateOpen = false;
+                    break;
+                }
+            }
+        } else {
+            suggestedGateOpen = true;
+        }
+        if (suggestedGateOpen) {
+            suggestedSectionStart.style.display = 'none';
+            for (let suggestedIdx = 0; suggestedIdx < suggestedArticles.length; suggestedIdx++) {
+                const suggestedArticle = suggestedArticles[suggestedIdx];
+                if (suggestedSectionStart.compareDocumentPosition(suggestedArticle) & Node.DOCUMENT_POSITION_FOLLOWING) {
+                    suggestedArticle.style.display = 'none';
+                }
+            }
+        }
+    }
+}
+/** END **/
+
 /** show_unread_message_count **/
 const unread_message_count = document.querySelector('div[class="x4fivb0 xmn1u35 x10l6tqk xn0lweg x1vjfegm"]');
 if(unread_message_count){
