@@ -120,6 +120,8 @@ open class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPrefere
             ActivityCompat.requestPermissions(this, arrayOf(readExternalStorage), 23)
         }
 
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, true)
+
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         preferences.registerOnSharedPreferenceChangeListener(this)
 
