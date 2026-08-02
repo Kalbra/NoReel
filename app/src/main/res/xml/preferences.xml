@@ -24,6 +24,16 @@
                 android:summary="The feed where short videos / reels are played"
                 android:defaultValue="false" />
         <SwitchPreference
+                android:title="Reels in home feed"
+                android:key="home_feed_reels"
+                android:summary="Reels mixed between the posts of the home feed. Disabling stops them from playing and removes them."
+                android:defaultValue="false" />
+        <SwitchPreference
+                android:title="Reel scrolling"
+                android:key="reel_scrolling"
+                android:summary="Scrolling on from one reel to the next, for example after opening a reel someone sent you in a chat. Disabling keeps you on the reel you opened."
+                android:defaultValue="false" />
+        <SwitchPreference
                 android:title="Explore feed"
                 android:key="search_feed"
                 android:summary="The explore feed under the search bar when clicking at the search icon."

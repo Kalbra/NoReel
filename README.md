@@ -32,6 +32,16 @@ For more versions visit the [relase tab](https://github.com/Kalbra/NoReel/releas
 With this feature you can deactivate the reel feed. So you never spend hours scrolling through the feed again wasting your time.
 But when friends send you reels, you can only watch them. So only the best content for you. 
 
+### Reels in home feed deactivation
+Deactivating the reel feed does not stop reels from reaching you: they are also mixed between the normal posts of your home feed, where they
+start playing on their own as soon as you scroll past them. With this feature those reels are stopped and removed from the home feed,
+so scrolling your feed stays scrolling your feed. Reels that friends send you are untouched.
+
+### Reel scrolling deactivation
+A reel a friend sends you opens into the endless reel scroller: one swipe and you are in the algorithm again, which is exactly the
+trap [Reel feed deactivation](#reel-feed-deactivation) is meant to close. With this feature you still watch the reel that was sent to you,
+but scrolling on to the next one is disabled. Normal scrolling in your chats is not affected.
+
 ### Only followed feed
 You get content that you are not subscribed to in your home feed? Not if you active Followed feed. 
 Then you will only be shown content that is really useful to you. The content of your followers, your friends!
